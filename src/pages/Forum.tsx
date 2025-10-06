@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,8 +50,68 @@ const amaEvents = [
 ];
 
 const Forum = () => {
-  const [questions, setQuestions] = useState<Question[]>(initialQuestions);
+  const { user } = useAuth();
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [newQuestion, setNewQuestion] = useState({ title: '', body: '', tags: '' });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadQuestions();
+  }, []);
+
+  const loadQuestions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*, profiles(full_name)')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      const formattedQuestions = data?.map((q: any) => ({
+        id: q.id,
+        title: q.title,
+        content: q.body,
+        author: q.profiles?.full_name || 'Anonymous',
+        tags: q.tags || [],
+        upvotes: 0,
+        answers: 0,
+        timestamp: new Date(q.created_at).toLocaleString(),
+      })) || [];
+      
+      setQuestions(formattedQuestions);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+    }
+  };
+
+  const handlePostQuestion = async () => {
+    if (!user || !newQuestion.title || !newQuestion.body) return;
+    setLoading(true);
+
+    try {
+      const tags = newQuestion.tags.split(',').map(t => t.trim()).filter(Boolean);
+      const { error } = await supabase
+        .from('questions')
+        .insert({
+          user_id: user.id,
+          title: newQuestion.title,
+          body: newQuestion.body,
+          tags,
+        });
+
+      if (error) throw error;
+
+      setNewQuestion({ title: '', body: '', tags: '' });
+      setIsOpen(false);
+      loadQuestions();
+    } catch (error: any) {
+      console.error('Error posting question:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -72,10 +134,29 @@ const Forum = () => {
                 <DialogTitle>Ask a Question</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 pt-4">
-                <Input placeholder="Question title..." />
-                <Textarea placeholder="Provide details..." className="min-h-[150px]" />
-                <Input placeholder="Tags (comma separated)" />
-                <Button className="w-full">Post Question</Button>
+                <Input 
+                  placeholder="Question title..." 
+                  value={newQuestion.title}
+                  onChange={(e) => setNewQuestion({ ...newQuestion, title: e.target.value })}
+                />
+                <Textarea 
+                  placeholder="Provide details..." 
+                  className="min-h-[150px]"
+                  value={newQuestion.body}
+                  onChange={(e) => setNewQuestion({ ...newQuestion, body: e.target.value })}
+                />
+                <Input 
+                  placeholder="Tags (comma separated)"
+                  value={newQuestion.tags}
+                  onChange={(e) => setNewQuestion({ ...newQuestion, tags: e.target.value })}
+                />
+                <Button 
+                  className="w-full" 
+                  onClick={handlePostQuestion}
+                  disabled={loading || !user}
+                >
+                  {loading ? 'Posting...' : 'Post Question'}
+                </Button>
               </div>
             </DialogContent>
           </Dialog>

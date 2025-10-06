@@ -14,7 +14,335 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics_pitch_events: {
+        Row: {
+          created_at: string | null
+          deck_id: string | null
+          dwell_ms: number | null
+          id: string
+          question_text: string | null
+          slide_number: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          deck_id?: string | null
+          dwell_ms?: number | null
+          id?: string
+          question_text?: string | null
+          slide_number?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          deck_id?: string | null
+          dwell_ms?: number | null
+          id?: string
+          question_text?: string | null
+          slide_number?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_pitch_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      answers: {
+        Row: {
+          body: string
+          created_at: string | null
+          id: string
+          question_id: string
+          upvotes: number | null
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          id?: string
+          question_id: string
+          upvotes?: number | null
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          id?: string
+          question_id?: string
+          upvotes?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "answers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_posts: {
+        Row: {
+          created_at: string | null
+          excerpt: string | null
+          id: string
+          post_type: string | null
+          tags: string[] | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          excerpt?: string | null
+          id: string
+          post_type?: string | null
+          tags?: string[] | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string
+          post_type?: string | null
+          tags?: string[] | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_posts_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_apps: {
+        Row: {
+          attachments: string[] | null
+          chance_score: number | null
+          company: string
+          contacts: Json | null
+          created_at: string | null
+          date_applied: string | null
+          id: string
+          interviews: Json | null
+          jd_url: string | null
+          notes: string | null
+          reminders: Json | null
+          resume_version: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          attachments?: string[] | null
+          chance_score?: number | null
+          company: string
+          contacts?: Json | null
+          created_at?: string | null
+          date_applied?: string | null
+          id?: string
+          interviews?: Json | null
+          jd_url?: string | null
+          notes?: string | null
+          reminders?: Json | null
+          resume_version?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          attachments?: string[] | null
+          chance_score?: number | null
+          company?: string
+          contacts?: Json | null
+          created_at?: string | null
+          date_applied?: string | null
+          id?: string
+          interviews?: Json | null
+          jd_url?: string | null
+          notes?: string | null
+          reminders?: Json | null
+          resume_version?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_apps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          premium: boolean | null
+          updated_at: string | null
+          user_type: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          premium?: boolean | null
+          updated_at?: string | null
+          user_type?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          premium?: boolean | null
+          updated_at?: string | null
+          user_type?: string | null
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          body: string
+          created_at: string | null
+          id: string
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          equity_max: number | null
+          equity_min: number | null
+          id: string
+          investment_max: number | null
+          investment_min: number | null
+          job_types: string[] | null
+          locations: string[] | null
+          notify_email: boolean | null
+          remote_preference: string | null
+          salary_max: number | null
+          salary_min: number | null
+          sectors: string[] | null
+          stages: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          equity_max?: number | null
+          equity_min?: number | null
+          id?: string
+          investment_max?: number | null
+          investment_min?: number | null
+          job_types?: string[] | null
+          locations?: string[] | null
+          notify_email?: boolean | null
+          remote_preference?: string | null
+          salary_max?: number | null
+          salary_min?: number | null
+          sectors?: string[] | null
+          stages?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          equity_max?: number | null
+          equity_min?: number | null
+          id?: string
+          investment_max?: number | null
+          investment_min?: number | null
+          job_types?: string[] | null
+          locations?: string[] | null
+          notify_email?: boolean | null
+          remote_preference?: string | null
+          salary_max?: number | null
+          salary_min?: number | null
+          sectors?: string[] | null
+          stages?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

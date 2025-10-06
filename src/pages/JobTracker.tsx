@@ -1,4 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { Sidebar } from "@/components/Sidebar";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,24 +27,57 @@ const initialApplications: JobApplication[] = [
 ];
 
 const JobTracker = () => {
-  const [applications, setApplications] = useState<JobApplication[]>(initialApplications);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [newJob, setNewJob] = useState({ title: "", company: "", status: "applied" as const });
 
-  const addApplication = () => {
-    if (!newJob.title || !newJob.company) return;
+  useEffect(() => {
+    if (user) loadApplications();
+  }, [user]);
+
+  const loadApplications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('job_apps')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setApplications(data?.map((d: any) => ({
+        id: d.id,
+        title: d.title,
+        company: d.company,
+        status: d.status,
+        appliedDate: d.date_applied,
+      })) || []);
+    } catch (error) {
+      console.error('Error loading applications:', error);
+    }
+  };
+
+  const addApplication = async () => {
+    if (!newJob.title || !newJob.company || !user) return;
     
-    const application: JobApplication = {
-      id: Date.now().toString(),
-      title: newJob.title,
-      company: newJob.company,
-      status: newJob.status,
-      appliedDate: new Date().toISOString().split("T")[0],
-    };
-    
-    setApplications([...applications, application]);
-    setNewJob({ title: "", company: "", status: "applied" });
-    setIsOpen(false);
+    try {
+      const { error } = await supabase.from('job_apps').insert({
+        user_id: user.id,
+        title: newJob.title,
+        company: newJob.company,
+        status: newJob.status,
+      });
+      
+      if (error) throw error;
+      
+      toast.success('Application added!');
+      setNewJob({ title: "", company: "", status: "applied" });
+      setIsOpen(false);
+      loadApplications();
+    } catch (error: any) {
+      toast.error('Failed to add application');
+    }
   };
 
   const groupedApplications = {
@@ -50,8 +88,10 @@ const JobTracker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <main className="flex-1 ml-16 p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold mb-2">Job Application Tracker</h1>
@@ -123,8 +163,12 @@ const JobTracker = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {apps.map((app) => (
-                    <div key={app.id} className="p-4 border border-border rounded-lg hover:border-primary transition-colors cursor-pointer">
+                   {apps.map((app) => (
+                    <div 
+                      key={app.id} 
+                      className="p-4 border border-border rounded-lg hover:border-primary transition-colors cursor-pointer"
+                      onClick={() => navigate(`/job-detail/${app.id}`)}
+                    >
                       <div className="flex items-start gap-3">
                         <Briefcase className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
                         <div className="flex-1 min-w-0">
@@ -140,7 +184,7 @@ const JobTracker = () => {
             </Card>
           ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 };
