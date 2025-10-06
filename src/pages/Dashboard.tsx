@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Building2, Home, Search, Heart, MessageCircle, Bookmark, User, Settings } from "lucide-react";
+import { Building2, Home, Search, Heart, MessageCircle, Bookmark, User, Settings, BarChart3, TrendingUp, CheckSquare, FileText, Target, Users, Award, GraduationCap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -48,6 +48,70 @@ const Dashboard = () => {
                 <span className="ml-auto bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">3</span>
               </Button>
             </Link>
+            
+            <div className="pt-4 pb-2">
+              <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">Analytics</p>
+            </div>
+            <Link to="/pitch-analytics">
+              <Button variant="ghost" className="w-full justify-start" size="default">
+                <BarChart3 className="mr-2 w-4 h-4" />
+                Pitch Analytics
+              </Button>
+            </Link>
+            <Link to="/job-trends">
+              <Button variant="ghost" className="w-full justify-start" size="default">
+                <TrendingUp className="mr-2 w-4 h-4" />
+                Job Trends
+              </Button>
+            </Link>
+            
+            <div className="pt-4 pb-2">
+              <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">Career Tools</p>
+            </div>
+            <Link to="/job-tracker">
+              <Button variant="ghost" className="w-full justify-start" size="default">
+                <CheckSquare className="mr-2 w-4 h-4" />
+                Job Tracker
+              </Button>
+            </Link>
+            <Link to="/resume-optimizer">
+              <Button variant="ghost" className="w-full justify-start" size="default">
+                <FileText className="mr-2 w-4 h-4" />
+                Resume Optimizer
+              </Button>
+            </Link>
+            <Link to="/skill-gap">
+              <Button variant="ghost" className="w-full justify-start" size="default">
+                <Target className="mr-2 w-4 h-4" />
+                Skill Gap
+              </Button>
+            </Link>
+            
+            <div className="pt-4 pb-2">
+              <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">Community</p>
+            </div>
+            <Link to="/forum">
+              <Button variant="ghost" className="w-full justify-start" size="default">
+                <Users className="mr-2 w-4 h-4" />
+                Forum
+              </Button>
+            </Link>
+            <Link to="/success-stories">
+              <Button variant="ghost" className="w-full justify-start" size="default">
+                <Award className="mr-2 w-4 h-4" />
+                Success Stories
+              </Button>
+            </Link>
+            <Link to="/mentorship">
+              <Button variant="ghost" className="w-full justify-start" size="default">
+                <GraduationCap className="mr-2 w-4 h-4" />
+                Mentorship
+              </Button>
+            </Link>
+            
+            <div className="pt-4 pb-2">
+              <p className="px-3 text-xs font-semibold text-muted-foreground uppercase">Account</p>
+            </div>
             <Link to="/saved">
               <Button variant="ghost" className="w-full justify-start" size="default">
                 <Bookmark className="mr-2 w-4 h-4" />

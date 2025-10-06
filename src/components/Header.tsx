@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Building2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Header = () => {
   return (
@@ -24,6 +25,7 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <Link to="/login">
             <Button variant="ghost" size="default">
               Log In
